@@ -96,6 +96,9 @@ button:focus-visible,textarea:focus-visible,.wa:focus-visible{outline:2px solid 
 #dq{width:100%;padding:10px;border-radius:8px;border:1px solid #3f3f5c;background:#11111b;color:#fff;font-size:15px;margin-bottom:8px}
 .try{background:#ff2e63;color:#fff;border:0;padding:6px 16px;border-radius:16px;font-weight:700;font-size:14px;cursor:pointer}
 .ai-h span{display:flex;gap:4px}
+.web-mode #output-text{flex:0 0 auto;min-height:60px;max-height:130px;padding:8px 12px;font-size:13px;margin-top:8px}
+.web-mode #output-frame{min-height:260px}
+#newtab{margin-inline-start:8px;background:none;border:1px solid #00adb5;color:#00adb5;border-radius:12px;padding:2px 10px;font-size:12px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -123,9 +126,9 @@ button:focus-visible,textarea:focus-visible,.wa:focus-visible{outline:2px solid 
     </div>
   </section>
   <section class="output-section">
-    <div class="section-title">📊 شاشة عرض النتائج المباشرة:</div>
+    <div class="section-title">📊 شاشة عرض النتائج المباشرة: <button id="newtab" hidden>↗ فتح في تبويب</button></div>
     <div id="output-text"></div>
-    <iframe id="output-frame" sandbox="allow-scripts" title="النتيجة"></iframe>
+    <iframe id="output-frame" sandbox="allow-scripts allow-same-origin allow-modals allow-forms allow-popups allow-downloads allow-pointer-lock" title="النتيجة"></iframe>
   </section>
 </div>
 <div class="btn-container"><button class="run-btn" id="run">تشغيل الشفرة البرمجية 🚀</button></div>
@@ -294,13 +297,21 @@ function setLang(l){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
   ed.value=T[l];ed.dir=l==='dhad'?'rtl':'ltr';
   $('editor-label').textContent='✍️ اكتب كود «'+LBL[l]+'» هنا:';
-  const w=l==='web';out.style.display=w?'none':'block';frame.style.display=w?'block':'none';frame.srcdoc='';
-  out.innerHTML='';line('النتيجة ستظهر هنا بعد الضغط على تشغيل الكود…','hint');
+  const w=l==='web';document.body.classList.toggle('web-mode',w);$('newtab').hidden=!w;out.style.display='block';frame.style.display=w?'block':'none';frame.srcdoc='';
+  out.innerHTML='';line(w?'الكونسول: رسائل console.log وأخطاء JavaScript من صفحتك تظهر هنا.':'النتيجة ستظهر هنا بعد الضغط على تشغيل الكود…','hint');
   if(typeof upd==='function')upd();
 }
+const SPY="<script>(function(){var s=function(t,m){parent.postMessage({dhad:1,t:t,m:String(m)},'*')};['log','info','warn','error'].forEach(function(k){var o=console[k];console[k]=function(){var a=[].slice.call(arguments).map(function(x){try{return typeof x==='object'?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(' ');s(k,a);o.apply(console,arguments)}});addEventListener('error',function(e){s('error',e.message+(e.lineno?' (سطر '+e.lineno+')':''))});addEventListener('unhandledrejection',function(e){s('error',e.reason)})})()<\/script>";
+function inject(c){let m;
+  if(m=c.match(/<head[^>]*>/i))return c.replace(m[0],m[0]+SPY);
+  if(m=c.match(/<html[^>]*>/i))return c.replace(m[0],m[0]+SPY);
+  if(m=c.match(/^\s*<!doctype[^>]*>/i))return c.replace(m[0],m[0]+SPY);
+  return SPY+c}
+addEventListener('message',e=>{const d=e.data;if(lang==='web'&&d&&d.dhad&&e.source===frame.contentWindow)line((d.t==='error'?'⚠️ ':'')+d.m,d.t==='error'?'err':'')});
+$('newtab').addEventListener('click',()=>{window.open(URL.createObjectURL(new Blob([ed.value],{type:'text/html'})),'_blank')});
 function run(){
   const code=ed.value;
-  if(lang==='web'){frame.srcdoc=code;return}
+  if(lang==='web'){out.innerHTML='';frame.srcdoc=inject(code);return}
   out.innerHTML='';
   if(!code.trim()){line('اكتب الكود أولاً.','err');return}
   const P=(...a)=>line(a.map(fm).join(' '));

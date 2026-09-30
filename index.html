@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>محرر لغة الضاد البرمجية</title>
+<meta name="theme-color" content="#1e1e2e">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>محرر لغة الضاد البرمجية 💻 ✨</h1>
+  <p>بيئة تطوير متعددة اللغات تعمل داخل جهازك بدون سيرفرات</p>
+  <button id="install" hidden>تثبيت التطبيق 📲</button>
+</header>
+<nav class="tabs-container">
+  <button class="tab-btn active" data-lang="dhad">لغة الضاد العربية 🇸🇦</button>
+  <button class="tab-btn" data-lang="python">Python 🐍</button>
+  <button class="tab-btn" data-lang="javascript">JavaScript ⚡</button>
+  <button class="tab-btn" data-lang="web">واجهات الويب (HTML/CSS) 🌐</button>
+  <button class="tab-btn" data-view="docs">📖 القاموس والقواعد</button>
+</nav>
+<div class="main-container">
+  <section class="editor-section">
+    <div class="section-title"><span id="editor-label"></span> <span class="lc" id="lc"></span></div>
+    <div class="editor-wrapper">
+      <div class="gutter" id="gut" aria-hidden="true"></div>
+      <div class="code-area">
+        <pre id="hl" aria-hidden="true"></pre>
+        <textarea id="code-editor" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+      </div>
+    </div>
+  </section>
+  <section class="output-section">
+    <div class="section-title">📊 شاشة عرض النتائج المباشرة: <button id="newtab" hidden>↗ فتح في تبويب</button></div>
+    <div id="output-text"></div>
+    <iframe id="output-frame" sandbox="allow-scripts allow-same-origin allow-modals allow-forms allow-popups allow-downloads allow-pointer-lock" title="النتيجة"></iframe>
+  </section>
+</div>
+<div class="btn-container"><button class="run-btn" id="run">تشغيل الشفرة البرمجية 🚀</button></div>
+<div id="docs">
+  <section><h2>ما هي لغة الضاد؟</h2>
+    <p>لغة برمجة عربية تعليمية، تكتب أوامرها بالعربية (مثل «اكتب» و«اذا» و«كرر») فتُترجم فوراً إلى JavaScript وتعمل داخل متصفحك، بلا خادم ولا تثبيت.</p></section>
+  <section><h2>إلى ماذا تهدف؟</h2><ul>
+    <li>تقريب البرمجة لمن لا يتقن الإنجليزية.</li>
+    <li>تعلّم أساسيات البرمجة بلغتك: المتغيرات والشروط والحلقات والدوال.</li>
+    <li>التمهيد للانتقال السهل إلى JavaScript، فلكل كلمة عربية مقابل معروف في القاموس أدناه.</li>
+    <li>بيئة خفيفة تعمل على الهاتف بلا إنترنت بعد التثبيت.</li></ul></section>
+  <section><h2>القواعد</h2><ul>
+    <li>الأوامر تُكتب في أسطر، وتنتهي الجملة بـ <b>;</b> (اختيارية في معظم الحالات).</li>
+    <li>الكتل (الشرط والحلقة والدالة) تُكتب بين <b>{ }</b>.</li>
+    <li>النصوص بين <b>" "</b> أو <b>' '</b>، والتعليقات تبدأ بـ <b>//</b>.</li>
+    <li>الأرقام عربية (٣) أو إنجليزية (3)، ويقبل المترجم الفاصلة العشرية ٫ والفاصلة ، والمنقوطة ؛</li>
+    <li>الكلمات المفتاحية محجوزة، فلا تستخدمها أسماء لمتغيراتك.</li>
+    <li>أسماء المتغيرات والدوال بالعربية أو الإنجليزية، ويقبل المترجم الهمزة وبدونها في «اذا/إذا» و«والا/وإلا».</li>
+    <li>الشروط: <b>و</b> و<b>أو</b> و<b>ليس</b>، والمقارنة بـ <b>== != &gt; &lt; &gt;= &lt;=</b>. استخدم <b>==</b> للمقارنة و<b>=</b> للتخصيص فقط.</li>
+    <li>التكرار العددي: <b>كرر العدد مرة { }</b>.</li>
+    <li>الترجمة تستبدل الكلمات خارج النصوص فقط، فما بين علامات الاقتباس يبقى كما كتبته.</li>
+    <li>بما أن اللغة تُترجم إلى JavaScript، فأي كود JavaScript داخل برنامجك يعمل أيضاً.</li></ul></section>
+  <section><h2>القاموس</h2>
+    <input id="dq" type="search" placeholder="ابحث عن كلمة أو معنى…">
+    <div class="tw"><table><thead><tr><th>الكلمة</th><th>ما يقابلها</th><th>الشرح</th><th>مثال</th></tr></thead><tbody id="dtb"></tbody></table></div></section>
+  <section><h2>أمثلة</h2><div id="dexs"></div></section>
+</div>
+<a class="wa" href="https://wa.me/201040630335" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.3-1.4A10 10 0 1 0 12 2z"/><path fill="#25d366" transform="translate(6 6) scale(.5)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+</a>
+<button class="ai-fab" id="ai-open" aria-label="المساعد الذكي">🤖</button>
+<aside class="ai" id="ai" hidden>
+  <div class="ai-h"><b>🤖 المساعد الذكي</b><span><button id="ai-power" title="تفعيل الذكاء المحلي" aria-label="تفعيل الذكاء المحلي">⚡</button><button id="ai-x" aria-label="إغلاق">✕</button></span></div>
+  <div class="ai-log" id="ai-log"></div>
+  <div class="ai-chips" id="ai-chips"></div>
+  <div class="ai-in"><input id="ai-q" placeholder="اسألني أو اطلب فحص كودك…" autocomplete="off"><button id="ai-send">إرسال</button></div>
+</aside>
+<script src="dict.js"></script>
+<script src="engine.js"></script>
+<script src="editor.js"></script>
+<script src="helper.js"></script>
+<script src="ai.js"></script>
+</body>
+</html>
